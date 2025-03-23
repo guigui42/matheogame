@@ -1,4 +1,4 @@
-# My First Game Build With AI - Interactive Web Game for Kids
+# My First Game Built GitHub Copilot - Interactive Web Game for Kids
 
 A simple and engaging web-based game designed for young children to develop hand-eye coordination and basic computer skills while having fun!
 
