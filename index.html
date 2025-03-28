@@ -115,6 +115,168 @@
         .bridge::after {
             right: 15px;
         }
+
+        .house {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 1;
+        }
+
+        .house-body {
+            width: 120px;
+            height: 100px;
+            background-color: #F5DEB3;
+            border: 2px solid #8B4513;
+        }
+
+        .roof {
+            width: 0;
+            height: 0;
+            border-left: 70px solid transparent;
+            border-right: 70px solid transparent;
+            border-bottom: 60px solid #A52A2A;
+            position: relative;
+            top: -10px;
+            left: -10px;
+        }
+
+        .door {
+            width: 30px;
+            height: 50px;
+            background-color: #8B4513;
+            position: absolute;
+            bottom: 0;
+            left: 20px;
+        }
+
+        .window {
+            width: 30px;
+            height: 30px;
+            background-color: #87CEEB;
+            border: 2px solid #8B4513;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+
+        .window:before, .window:after {
+            content: '';
+            position: absolute;
+            background-color: #8B4513;
+        }
+
+        .window:before {
+            height: 100%;
+            width: 2px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .window:after {
+            width: 100%;
+            height: 2px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        /* Style pour le personnage qui parle */
+        .character {
+            position: fixed;
+            bottom: 20px;
+            right: 120px;
+            z-index: 5;
+            width: 80px;
+            height: 150px;
+        }
+
+        .character-head {
+            width: 60px;
+            height: 60px;
+            background-color: #FFD700;
+            border: 2px solid #000;
+            border-radius: 50%;
+            position: relative;
+        }
+
+        .character-body {
+            width: 50px;
+            height: 70px;
+            background-color: #FF6347;
+            border: 2px solid #000;
+            border-radius: 0 0 25px 25px;
+            position: relative;
+            top: -10px;
+            left: 5px;
+            z-index: -1;
+        }
+
+        .character-eye {
+            width: 10px;
+            height: 10px;
+            background-color: #000;
+            border-radius: 50%;
+            position: absolute;
+        }
+
+        .character-eye.left {
+            top: 20px;
+            left: 15px;
+        }
+
+        .character-eye.right {
+            top: 20px;
+            right: 15px;
+        }
+
+        .character-mouth {
+            width: 30px;
+            height: 15px;
+            border-bottom: 2px solid #000;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 10px;
+            left: 15px;
+        }
+
+        .speech-bubble {
+            position: absolute;
+            top: -100px;
+            left: -50px;
+            background-color: white;
+            padding: 15px;
+            border-radius: 20px;
+            border: 2px solid #000;
+            width: 200px;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            font-size: 16px;
+            opacity: 0;
+            transition: opacity 0.5s;
+            z-index: 10;
+        }
+
+        .speech-bubble:after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            right: 70px;
+            border-width: 20px 0 0 20px;
+            border-style: solid;
+            border-color: white transparent transparent transparent;
+            transform: rotate(10deg);
+        }
+
+        .speech-bubble:before {
+            content: '';
+            position: absolute;
+            bottom: -23px;
+            right: 68px;
+            border-width: 23px 0 0 23px;
+            border-style: solid;
+            border-color: #000 transparent transparent transparent;
+            transform: rotate(10deg);
+            z-index: -1;
+        }
     </style>
 </head>
 <body>
@@ -130,6 +292,26 @@
 
     <div class="river"></div>
     <div class="bridge"></div>
+
+    <div class="house">
+        <div class="roof"></div>
+        <div class="house-body">
+            <div class="door"></div>
+            <div class="window"></div>
+        </div>
+    </div>
+
+    <div class="character">
+        <div class="speech-bubble" id="speechBubble">
+            Bienvenue dans ce jeu ! Clique sur les bulles et déplace l'oiseau avec les flèches !
+        </div>
+        <div class="character-head">
+            <div class="character-eye left"></div>
+            <div class="character-eye right"></div>
+            <div class="character-mouth"></div>
+        </div>
+        <div class="character-body"></div>
+    </div>
 
     <script>
         let score = 0;
@@ -179,6 +361,55 @@
             bird.style.left = birdX + 'px';
             bird.style.top = birdY + 'px';
         });
+
+        // Code pour faire parler le personnage
+        const character = document.querySelector('.character');
+        const speechBubble = document.getElementById('speechBubble');
+        let isTalking = false;
+        
+        const messages = [
+            "Bienvenue dans ce jeu ! Clique sur les bulles et déplace l'oiseau avec les flèches !",
+            "Tu peux traverser le pont pour explorer l'autre côté de la rivière !",
+            "Bravo ! Continue à attraper les bulles roses !",
+            "L'oiseau bleu peut voler partout sur l'écran. Essaie de l'amener sur le pont !",
+            "Regarde la jolie maison en bas à gauche !"
+        ];
+        
+        character.addEventListener('click', function() {
+            if (isTalking) {
+                speechBubble.style.opacity = 0;
+                isTalking = false;
+            } else {
+                const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+                speechBubble.textContent = randomMessage;
+                speechBubble.style.opacity = 1;
+                isTalking = true;
+                
+                // La bulle disparaît automatiquement après 5 secondes
+                setTimeout(function() {
+                    speechBubble.style.opacity = 0;
+                    isTalking = false;
+                }, 5000);
+            }
+        });
+
+        // Ajouter une réaction quand le score change
+        const originalBubbleClick = bubble.onclick;
+        bubble.onclick = function() {
+            originalBubbleClick();
+            
+            // Commentaires aléatoires basés sur le score
+            if (score % 5 === 0 && score > 0) {
+                speechBubble.textContent = "Génial ! Tu as déjà " + score + " points !";
+                speechBubble.style.opacity = 1;
+                isTalking = true;
+                
+                setTimeout(function() {
+                    speechBubble.style.opacity = 0;
+                    isTalking = false;
+                }, 3000);
+            }
+        };
     </script>
 </body>
 </html>
